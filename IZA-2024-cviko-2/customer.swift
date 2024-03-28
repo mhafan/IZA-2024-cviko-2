@@ -9,10 +9,18 @@ import Foundation
 
 // ---------------------------------------------------------------------------
 //
-@Observable class Customer: Identifiable, MyNotifications {
+class Customer: Identifiable, MyNotifications, ObservableObject {
     //
     let id: UUID
-    var name: String
+    
+    //
+    @Published var name: String {
+        //
+        willSet {
+            //
+            notifyMyUpdate()
+        }
+    }
     
     //
     init(name: String) {

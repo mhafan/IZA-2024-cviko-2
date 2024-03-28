@@ -6,28 +6,35 @@
 //
 
 import SwiftUI
+import Observation
+import Combine
 
 //
-class PokusModel: ObservableObject {
+@Observable class PokusModel : Identifiable {
     //
-    @Published var citac = 0
+    let id = UUID()
+    var citac = 0
+    let label: String
     
     //
     func action() { citac += 1 }
+    
+    init(label: String) {
+        self.label = label
+    }
 }
 
 //
 struct PokusRow: View {
     //
-    let label: String
-    @StateObject var model = PokusModel()
+    @Bindable var model: PokusModel
     
     //
     var body: some View {
         //
         VStack {
             //
-            Text(label)
+            Text(model.label)
             Text("\(model.citac)")
             Button(action: { model.action() }) { Text("klik")}
         }
@@ -36,24 +43,52 @@ struct PokusRow: View {
 
 
 //
+@Observable class PokusPageEntireModel {
+    //
+    var list: [PokusModel] = [PokusModel(label: "a"), PokusModel(label: "b")]
+    var counter = 0
+    var cosi = ""
+    
+    //
+    @ObservationIgnored var _subs: AnyCancellable?
+    
+    //
+    init() {
+        //
+        _subs = self.list.publisher.sink { v in
+            //
+            print(v.label)
+        }
+    }
+}
+
+//
 struct PokusPage: View {
     //
-    @State var list = ["a", "b", "c"]
+    @State var list = PokusPageEntireModel()
     
     //
     var body: some View {
         //
-        List {
+        NavigationView {
             //
-            Button(action: { list.append("dalsi") }) {
+            List {
                 //
-                Text("Dalsi")
-            }
-            
-            //
-            ForEach(list, id: \.self) { l in
+                Button(action: { list.list.append(PokusModel(label: "dalsi")) }) {
+                    //
+                    Text("Dalsi")
+                }
+                
                 //
-                PokusRow(label: l)
+                Text("Udalosti: \(list.counter)")
+                
+                //
+                ForEach(list.list) { l in
+                    //
+                    NavigationLink(destination: PokusRow(model: l)) {
+                        Text("\(l.label): \(l.citac)")
+                    }
+                }
             }
         }
     }

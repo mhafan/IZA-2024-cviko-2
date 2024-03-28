@@ -12,7 +12,7 @@ import SwiftUI
 // Detail pohledu na Customer
 struct CustomerDetailView: View {
     // ... observing
-    @Bindable var customer: Customer
+    @ObservedObject var customer: Customer
     
     // -----------------------------------------------------------------------
     //
