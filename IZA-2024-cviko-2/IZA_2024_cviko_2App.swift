@@ -9,6 +9,16 @@ import SwiftUI
 
 @main
 struct IZA_2024_cviko_2App: App {
+    //
+    init() {
+        //
+        DispatchQueue.main.async {
+            //
+            MainDB.demoContent()
+        }
+    }
+    
+    //
     var body: some Scene {
         WindowGroup {
             ContentView()
