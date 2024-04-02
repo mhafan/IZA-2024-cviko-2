@@ -8,7 +8,7 @@
 import Foundation
 
 // ---------------------------------------------------------------------------
-//
+// 
 class Customer: Identifiable, MyNotifications, ObservableObject {
     //
     let id: UUID
@@ -16,7 +16,7 @@ class Customer: Identifiable, MyNotifications, ObservableObject {
     //
     @Published var name: String {
         //
-        willSet {
+        didSet {
             //
             notifyMyUpdate()
         }

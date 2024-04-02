@@ -10,13 +10,13 @@ import SwiftUI
 
 
 // ---------------------------------------------------------------------------
-//
+// Order je @Observable
 struct DetailOnOrderView: View {
-    //
+    // ale tady budu chtit binding, coz mi dava @Bindable
     @Bindable var order: Order
     
     //
-    let escapeAction: ()->()
+    let escapeAction: (MyNavigationDetail)->()
     
     //
     func odbavZakazku() {
@@ -24,7 +24,16 @@ struct DetailOnOrderView: View {
         MainDB.shared.switchToNextState(order: order);
         
         //
-        escapeAction()
+        escapeAction(.toOrder(order))
+    }
+    
+    //
+    func smazZakazku() {
+        //
+        MainDB.shared.delete(order: order)
+        
+        //
+        escapeAction(.none)
     }
     
     //
@@ -52,7 +61,7 @@ struct DetailOnOrderView: View {
             //
             Section("Akce") {
                 //
-                Button(action: {}) { Text("Smazat") }
+                Button(action: smazZakazku) { Text("Smazat") }
                 Button(action: odbavZakazku) { Text("Odbavit")}
                 
                 //

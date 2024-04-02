@@ -14,7 +14,7 @@ import SwiftUI
 //
 struct TableRowOnOrderAttr: View {
     //
-    @Bindable var order: Order
+    var order: Order
     let label: String
     let value: () -> String
     
@@ -32,8 +32,8 @@ struct TableRowOnOrderAttr: View {
 // ---------------------------------------------------------------------------
 //
 struct TableRowOnOrderPlain: View {
-    //
-    @Bindable var order: Order
+    // @Observable
+    var order: Order
     
     //
     var body: some View {
@@ -49,8 +49,8 @@ struct TableRowOnOrderPlain: View {
 // ---------------------------------------------------------------------------
 //
 struct TableRowOnOrderStructured: View {
-    //
-    @Bindable var order: Order
+    // je @Observable
+    var order: Order
     
     //
     var body: some View {

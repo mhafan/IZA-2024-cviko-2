@@ -11,7 +11,7 @@ import SwiftUI
 // ---------------------------------------------------------------------------
 // Detail pohledu na Customer
 struct CustomerDetailView: View {
-    // ... observing
+    // ... observing (Customer je ObservableObject)
     @ObservedObject var customer: Customer
     
     // -----------------------------------------------------------------------
@@ -21,7 +21,7 @@ struct CustomerDetailView: View {
         Form {
             //
             Section("Name") {
-                //
+                // -> binding
                 TextField("Jmeno:", text: $customer.name)
             }
             
@@ -43,6 +43,7 @@ enum MyNavigationDetail: Hashable {
     //
     case toCustomer(Customer)
     case toOrder(Order)
+    case none
 }
 
 // ---------------------------------------------------------------------------

@@ -63,10 +63,10 @@ extension OrderState {
     let created: Date
     var updated: Date
     let customer: Customer
-    var content: String {
+    var content: String /*{
         //
-        didSet { notifyMyUpdate() }
-    }
+        willSet { notifyMyUpdate() }
+    }*/
     
     // debug
     var citac = 0 {

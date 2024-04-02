@@ -99,17 +99,18 @@ struct ListOfOrdersView: View {
             // vnoreny destination + escape akce
             if case let .toOrder(order) = navItem {
                 //
-                DetailOnOrderView(order: order) {
+                DetailOnOrderView(order: order) { nextNavigation in 
                     //
-                    if order.state != .dispatched {
-                        // navigation-pop
-                        let _ = vm.navigationPath.popLast()
-                        
-                        // zmenim pohled na novy selected-state
-                        vm.selectedOrderState = order.state
-                        
-                        // a volam navigaci na detail
-                        vm.navigationPath.append(.toOrder(order))
+                    // navigation-pop
+                    let _ = vm.navigationPath.popLast()
+                    
+                    // zmenim pohled na novy selected-state
+                    vm.selectedOrderState = order.state
+                    
+                    // a volam navigaci na detail
+                    if nextNavigation != .none {
+                        //
+                        vm.navigationPath.append(nextNavigation)
                     }
                 }
             } else {

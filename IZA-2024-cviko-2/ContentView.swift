@@ -14,11 +14,12 @@ import Combine
     //
     let id = UUID()
     var citac = 0
-    let label: String
+    var label: String
     
     //
     func action() { citac += 1 }
     
+    //
     init(label: String) {
         self.label = label
     }
@@ -36,6 +37,7 @@ struct PokusRow: View {
             //
             Text(model.label)
             Text("\(model.citac)")
+            TextField("dddjd", text: $model.label)
             Button(action: { model.action() }) { Text("klik")}
         }
     }
@@ -45,20 +47,33 @@ struct PokusRow: View {
 //
 @Observable class PokusPageEntireModel {
     //
-    var list: [PokusModel] = [PokusModel(label: "a"), PokusModel(label: "b")]
+    var list: [PokusModel] = [PokusModel(label: "a"), PokusModel(label: "bb")]
+    var found: [PokusModel] = []
     var counter = 0
     var cosi = ""
+    var search = ""
     
     //
-    @ObservationIgnored var _subs: AnyCancellable?
+    func update() {
+        //
+        found = list.filter { $0.label.count <= search.count }
+    }
     
     //
     init() {
+    
+    }
+}
+
+//
+struct Subp: View {
+    //
+    @Environment(PokusPageEntireModel.self) var model
+    
+    //
+    var body: some View {
         //
-        _subs = self.list.publisher.sink { v in
-            //
-            print(v.label)
-        }
+        List(model.found) { i in Text(i.label) }
     }
 }
 
@@ -70,26 +85,16 @@ struct PokusPage: View {
     //
     var body: some View {
         //
-        NavigationView {
+        VStack {
             //
-            List {
-                //
-                Button(action: { list.list.append(PokusModel(label: "dalsi")) }) {
+            TextField("search", text: $list.search)
+                .onChange(of: list.search) {
                     //
-                    Text("Dalsi")
+                    list.update()
                 }
-                
-                //
-                Text("Udalosti: \(list.counter)")
-                
-                //
-                ForEach(list.list) { l in
-                    //
-                    NavigationLink(destination: PokusRow(model: l)) {
-                        Text("\(l.label): \(l.citac)")
-                    }
-                }
-            }
+            
+            ///
+            Subp().environment(list)
         }
     }
 }

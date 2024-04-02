@@ -10,7 +10,7 @@ import Combine
 import SwiftUI
 
 // ---------------------------------------------------------------------------
-//
+// nazev zpravy pres Notifikacni Centrum - o zmene objektu
 extension Notification.Name {
     //
     static let myObjectUpdated = Notification.Name("myObjectUpdated")
@@ -29,8 +29,9 @@ extension Array where Element:AnyObject {
     }
 }
 
+
 // ---------------------------------------------------------------------------
-//
+// Centralni singleton DB (jako ManagedObjectContext)
 class MainDB: ObservableObject {
     // -----------------------------------------------------------------------
     // Pametova varianta obsahu "tabulek"
@@ -76,6 +77,22 @@ class MainDB: ObservableObject {
         
         // timto trikem generuji udalost na @Published
         allOrders[_idx] = allOrders[_idx]
+    }
+    
+    // -----------------------------------------------------------------------
+    //
+    func delete(order: Order) {
+        // overeni vstupnich okolnosti
+        guard
+            //
+            let _idx = allOrders.firstIndex(where: { $0 === order })
+        else {
+            //
+            return ;
+        }
+        
+        //
+        allOrders.remove(at: _idx)
     }
     
     // -----------------------------------------------------------------------
@@ -154,7 +171,7 @@ class QueryOnOrders: ObservableObject {
     // -----------------------------------------------------------------------
     // ulozeny predikate WHERE
     let predicate: (Order) -> (Bool)
-    var _subscription: AnyCancellable?
+    var _subscription = Set<AnyCancellable>()
     
     // -----------------------------------------------------------------------
     // provedeni aktualizace meho selektu
@@ -173,11 +190,19 @@ class QueryOnOrders: ObservableObject {
         
         // registruju si SUBS na allOrders, tj prijimam kazdou zpravu
         // o zmene hodnoty
-        self._subscription = MainDB.shared.$allOrders.sink { newValueOfArray in
+        MainDB.shared.$allOrders.sink { newValueOfArray in
             // ... ktera vsak ma charakter "willChange", tj v tomto okamziku
             // ma @Published allOrders zatim jeste puvodni hodnotu
             self.update(with: newValueOfArray)
-        }
+        }.store(in: &_subscription)
+        
+        // registruju si SUBS na allCustomers, tj prijimam kazdou zpravu
+        // o zmene hodnoty
+        MainDB.shared.$allCustomers.sink { newValueOfArray in
+            // ... ktera vsak ma charakter "willChange", tj v tomto okamziku
+            // ma @Published allOrders zatim jeste puvodni hodnotu
+            self.update(with: MainDB.shared.allOrders)
+        }.store(in: &_subscription)
         
         // implicitni
         update(with: MainDB.shared.allOrders)
